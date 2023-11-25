@@ -72,13 +72,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean updateUser(Long id, UserServiceDto user) {
         Optional<User> existingUser = userRepository.findById(id);
+        User userToSave;
         if (existingUser.isPresent()) {
-            existingUser.get().setFirstName(user.getFirstName());
-            existingUser.get().setLastName(user.getLastName());
-            existingUser.get().setBirthDate(user.getBirthDate());
-            existingUser.get().setPhoneNumber(user.getPhoneNumber());
+            userToSave = existingUser.get();
+            userToSave.setFirstName(user.getFirstName());
+            userToSave.setLastName(user.getLastName());
+            userToSave.setBirthDate(user.getBirthDate());
+            userToSave.setPhoneNumber(user.getPhoneNumber());
 
-            this.userRepository.save(existingUser.get());
+            this.userRepository.save(userToSave);
             return true;
         }
         return false;
