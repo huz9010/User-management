@@ -3,11 +3,13 @@ package com.example.usermanagement.web;
 import com.example.usermanagement.model.dto.UserRegisterDto;
 import com.example.usermanagement.model.service.UserServiceDto;
 import com.example.usermanagement.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,23 +24,38 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserServiceDto>> getAllUsers() {
-        return ResponseEntity.ok(userService.findAll());
+    public ResponseEntity<List<UserServiceDto>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<UserServiceDto> usersPage = this.userService.findAll(PageRequest.of(page, size));
+        return ResponseEntity.ok(usersPage.getContent());
     }
 
     @GetMapping("/byFirstName/{firstName}")
-    public ResponseEntity<List<UserServiceDto>> getUsersByFirstName(@PathVariable("firstName") String firstName) {
-        return ResponseEntity.ok(this.userService.findByFirstName(firstName));
+    public ResponseEntity<List<UserServiceDto>> getUsersByFirstName(
+            @PathVariable("firstName") String firstName,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<UserServiceDto> usersPage = this.userService.findByFirstName(firstName, PageRequest.of(page, size));
+        return ResponseEntity.ok(usersPage.getContent());
     }
 
     @GetMapping("/byLastName/{lastName}")
-    public ResponseEntity<List<UserServiceDto>> getUsersByLastName(@PathVariable("lastName") String lastName) {
-        return ResponseEntity.ok(this.userService.findByLastName(lastName));
+    public ResponseEntity<List<UserServiceDto>> getUsersByLastName(
+            @PathVariable("lastName") String lastName,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<UserServiceDto> usersPage = this.userService.findByLastName(lastName, PageRequest.of(page, size));
+        return ResponseEntity.ok(usersPage.getContent());
     }
 
     @GetMapping("/byBirthDate/{birthDate}")
-    public ResponseEntity<List<UserServiceDto>> getUsersByBirthDate(@PathVariable("birthDate") Date birthDate) {
-        return ResponseEntity.ok(this.userService.findByBirthDate(birthDate));
+    public ResponseEntity<List<UserServiceDto>> getUsersByBirthDate(
+            @PathVariable("birthDate") LocalDate birthDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<UserServiceDto> usersPage = this.userService.findByBirthDate(birthDate, PageRequest.of(page, size));
+        return ResponseEntity.ok(usersPage.getContent());
     }
 
     @GetMapping("/byPhoneNumber/{phoneNumber}")
@@ -59,7 +76,10 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserServiceDto> updateUser(@PathVariable Long id, @RequestBody UserServiceDto user) {
-        return ResponseEntity.ok(this.userService.updateUser(id, user));
+        if (this.userService.updateUser(id, user)) {
+            return ResponseEntity.ok(this.userService.findById(id));
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")

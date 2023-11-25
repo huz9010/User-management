@@ -6,8 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
-
-import java.util.Date;
+import java.time.LocalDate;
 
 public class UserRegisterDto {
 
@@ -19,7 +18,7 @@ public class UserRegisterDto {
     private String lastName;
     @NotNull
     @PastOrPresent
-    private Date birthDate;
+    private LocalDate birthDate;
     @NotNull
     @UniquePhoneNumber
     private String phoneNumber;
@@ -47,11 +46,11 @@ public class UserRegisterDto {
         this.lastName = lastName;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 

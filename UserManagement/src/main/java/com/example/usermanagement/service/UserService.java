@@ -2,10 +2,9 @@ package com.example.usermanagement.service;
 
 import com.example.usermanagement.model.dto.UserRegisterDto;
 import com.example.usermanagement.model.service.UserServiceDto;
-import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import java.time.LocalDate;
 import java.util.Optional;
 
 public interface UserService {
@@ -14,19 +13,19 @@ public interface UserService {
 
     Optional<UserServiceDto> findByPhoneNumber(String phoneNumber);
 
-    List<UserServiceDto> findAll();
+    Page<UserServiceDto> findAll(Pageable pageable);
 
-    List<UserServiceDto> findByFirstName(String firstName);
+    Page<UserServiceDto> findByFirstName(String firstName, Pageable pageable);
 
-    List<UserServiceDto> findByLastName(String lastName);
+    Page<UserServiceDto> findByLastName(String lastName, Pageable pageable);
 
-    List<UserServiceDto> findByBirthDate(Date birthDate);
+    Page<UserServiceDto> findByBirthDate(LocalDate birthDate, Pageable pageable);
 
     UserServiceDto findById(Long id);
 
     Long register(UserRegisterDto userRegisterDto);
 
-    UserServiceDto updateUser(Long id, UserServiceDto user);
+    boolean updateUser(Long id, UserServiceDto user);
 
     boolean deleteUser(Long id);
 }

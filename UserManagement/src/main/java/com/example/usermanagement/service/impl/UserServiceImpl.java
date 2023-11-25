@@ -6,12 +6,11 @@ import com.example.usermanagement.model.service.UserServiceDto;
 import com.example.usermanagement.repo.UserRepository;
 import com.example.usermanagement.service.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -35,31 +34,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserServiceDto> findAll() {
-        return this.userRepository.findAll().stream()
-                .map(u -> this.modelMapper.map(u, UserServiceDto.class))
-                .collect(Collectors.toList());
+    public Page<UserServiceDto> findAll(Pageable pageable) {
+        return this.userRepository.findAll(pageable).
+                map(u -> this.modelMapper.map(u, UserServiceDto.class));
     }
 
     @Override
-    public List<UserServiceDto> findByFirstName(String firstName) {
-        return this.userRepository.findAllByFirstNameContainsIgnoreCase(firstName).stream()
-                .map(u -> this.modelMapper.map(u, UserServiceDto.class))
-                .collect(Collectors.toList());
+    public Page<UserServiceDto> findByFirstName(String firstName, Pageable pageable) {
+        return this.userRepository.findAllByFirstNameContainsIgnoreCase(firstName, pageable)
+                .map(u -> this.modelMapper.map(u, UserServiceDto.class));
     }
 
     @Override
-    public List<UserServiceDto> findByLastName(String lastName) {
-        return this.userRepository.findAllByLastNameContainsIgnoreCase(lastName).stream()
-                .map(u -> this.modelMapper.map(u, UserServiceDto.class))
-                .collect(Collectors.toList());
+    public Page<UserServiceDto> findByLastName(String lastName, Pageable pageable) {
+        return this.userRepository.findAllByLastNameContainsIgnoreCase(lastName, pageable)
+                .map(u -> this.modelMapper.map(u, UserServiceDto.class));
     }
 
     @Override
-    public List<UserServiceDto> findByBirthDate(Date birthDate) {
-        return this.userRepository.findAllByBirthDate(birthDate).stream()
-                .map(u -> this.modelMapper.map(u, UserServiceDto.class))
-                .collect(Collectors.toList());
+    public Page<UserServiceDto> findByBirthDate(LocalDate birthDate, Pageable pageable) {
+        return this.userRepository.findAllByBirthDate(birthDate, pageable)
+                .map(u -> this.modelMapper.map(u, UserServiceDto.class));
     }
 
     @Override
@@ -75,15 +70,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserServiceDto updateUser(Long id, UserServiceDto user) {
-        User existingUser = userRepository.findById(id).get();
-        existingUser.setFirstName(user.getFirstName());
-        existingUser.setLastName(user.getLastName());
-        existingUser.setBirthDate(user.getBirthDate());
-        existingUser.setPhoneNumber(user.getPhoneNumber());
+    public boolean updateUser(Long id, UserServiceDto user) {
+        Optional<User> existingUser = userRepository.findById(id);
+        if (existingUser.isPresent()) {
+            existingUser.get().setFirstName(user.getFirstName());
+            existingUser.get().setLastName(user.getLastName());
+            existingUser.get().setBirthDate(user.getBirthDate());
+            existingUser.get().setPhoneNumber(user.getPhoneNumber());
 
-        this.userRepository.save(existingUser);
-        return this.modelMapper.map(existingUser, UserServiceDto.class);
+            this.userRepository.save(existingUser.get());
+            return true;
+        }
+        return false;
     }
 
     @Override

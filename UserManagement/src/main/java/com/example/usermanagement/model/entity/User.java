@@ -1,8 +1,7 @@
 package com.example.usermanagement.model.entity;
 
 import jakarta.persistence.*;
-
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
@@ -16,7 +15,7 @@ public class User {
     @Column(name = "last_name", nullable = false)
     private String lastName;
     @Column(name = "birth_date", nullable = false)
-    private Date birthDate;
+    private LocalDate birthDate;
     @Column(name = "phone_number", unique = true, nullable = false)
     private String phoneNumber;
     @Column(unique = true, nullable = false)
@@ -49,11 +48,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 

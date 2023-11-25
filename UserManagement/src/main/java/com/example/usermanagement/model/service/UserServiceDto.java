@@ -1,16 +1,25 @@
 package com.example.usermanagement.model.service;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class UserServiceDto {
 
+    private Long id;
     private String firstName;
     private String lastName;
-    private Date birthDate;
+    private LocalDate birthDate;
     private String phoneNumber;
     private String email;
 
     public UserServiceDto() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -29,11 +38,11 @@ public class UserServiceDto {
         this.lastName = lastName;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
