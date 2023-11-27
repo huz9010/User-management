@@ -41,15 +41,14 @@ public class AuthController {
     public ResponseEntity<String> register(
             @RequestBody @Valid UserRegisterDto user,
             BindingResult bindingResult) {
-        String newUserEmail = this.userService.register(user);
-        if (newUserEmail == null) {
+        if (this.userService.userExists(user)) {
             return new ResponseEntity<>("User already exists!", HttpStatus.BAD_REQUEST);
         }
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
         }
-        return new ResponseEntity<>(newUserEmail, HttpStatus.CREATED);
+        return new ResponseEntity<>(this.userService.register(user), HttpStatus.CREATED);
     }
 
     @PostMapping("/logout")
