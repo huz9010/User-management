@@ -1,4 +1,4 @@
-package com.example.usermanagement.model.service;
+package com.example.usermanagement.model.dto;
 
 import java.time.LocalDate;
 

@@ -13,7 +13,7 @@ import java.time.LocalDate;
         message = "Passwords should match."
 )
 
-public class UserRegisterDto {
+public class UserUpdateDto {
 
     @NotNull
     @Size(min = 2, max = 60)
@@ -39,7 +39,8 @@ public class UserRegisterDto {
     @Size(min = 6, max = 20)
     private String confirmPassword;
 
-    public UserRegisterDto() {
+
+    public UserUpdateDto() {
     }
 
     public String getFirstName() {

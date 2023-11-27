@@ -1,6 +1,6 @@
 package com.example.usermanagement.repo;
 
-import com.example.usermanagement.model.entity.User;
+import com.example.usermanagement.model.entity.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,15 +9,22 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
-    Optional<User> findByEmailContainsIgnoreCase(String email);
+    Page<UserEntity> findByEmailContainsIgnoreCase(String email, Pageable pageable);
 
-    Optional<User> findByPhoneNumberContainsIgnoreCase(String phoneNumber);
+    Page<UserEntity> findByPhoneNumberContainsIgnoreCase(String phoneNumber, Pageable pageable);
 
-    Page<User> findAllByFirstNameContainsIgnoreCase(String firstName, Pageable pageable);
+    Page<UserEntity> findAllByFirstNameContainsIgnoreCase(String firstName, Pageable pageable);
 
-    Page<User> findAllByLastNameContainsIgnoreCase(String lastName, Pageable pageable);
+    Page<UserEntity> findAllByLastNameContainsIgnoreCase(String lastName, Pageable pageable);
 
-    Page<User> findAllByBirthDate(LocalDate date, Pageable pageable);
+    Page<UserEntity> findAllByBirthDate(LocalDate date, Pageable pageable);
+
+    Optional<UserEntity> findByEmail(String email);
+
+    Optional<UserEntity> findByPhoneNumber(String phoneNumber);
+
+    Page<UserEntity> findAllByOrderByLastNameAscBirthDateAsc(Pageable pageable);
+
 }

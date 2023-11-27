@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,8 +20,12 @@ public class User {
     private String phoneNumber;
     @Column(unique = true, nullable = false)
     private String email;
+    @Column
+    private String password;
+    @ManyToOne
+    private UserRole role;
 
-    public User() {
+    public UserEntity() {
     }
 
     public Long getId() {
@@ -70,5 +74,21 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 }

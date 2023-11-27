@@ -1,29 +1,31 @@
 package com.example.usermanagement.web;
 
-import com.example.usermanagement.model.dto.UserRegisterDto;
-import com.example.usermanagement.model.service.UserServiceDto;
+import com.example.usermanagement.model.dto.UserServiceDto;
+import com.example.usermanagement.model.dto.UserUpdateDto;
 import com.example.usermanagement.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
-public class UserController {
+public class UserManagementController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    public UserManagementController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<UserServiceDto>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -58,36 +60,55 @@ public class UserController {
         return ResponseEntity.ok(usersPage.getContent());
     }
 
+    @GetMapping("/byEmail/{email}")
+    public ResponseEntity<List<UserServiceDto>> getUserByEmail(
+            @PathVariable("email") String email,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<UserServiceDto> usersPage = this.userService.findByEmail(email, PageRequest.of(page, size));
+        return ResponseEntity.ok(usersPage.getContent());
+    }
+
     @GetMapping("/byPhoneNumber/{phoneNumber}")
-    public ResponseEntity<UserServiceDto> getUserByPhoneNumber(@PathVariable("phoneNumber") String phoneNumber) {
-        Optional<UserServiceDto> optionalUser = this.userService.findByPhoneNumber(phoneNumber);
-        return optionalUser
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<List<UserServiceDto>> getUserByPhoneNumber(
+            @PathVariable("phoneNumber") String phoneNumber,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<UserServiceDto> usersPage = this.userService.findByPhoneNumber(phoneNumber, PageRequest.of(page, size));
+        return ResponseEntity.ok(usersPage.getContent());
     }
 
-    @PostMapping
-    public ResponseEntity<UserRegisterDto> register(@RequestBody UserRegisterDto user, UriComponentsBuilder uriComponentsBuilder) {
-        Long newUserId = this.userService.register(user);
-        return ResponseEntity.created(
-                uriComponentsBuilder.path("/api/users/{id}").build(newUserId)
-        ).build();
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<UserServiceDto> updateUser(@PathVariable Long id, @RequestBody UserServiceDto user) {
-        if (this.userService.updateUser(id, user)) {
-            return ResponseEntity.ok(this.userService.findById(id));
+    @GetMapping("/byId/{id}")
+    public ResponseEntity<UserServiceDto> getUserById(
+            @PathVariable("id") Long id) {
+        UserServiceDto user = this.userService.findById(id);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(user);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<UserServiceDto> deleteUser(@PathVariable Long id) {
         if (this.userService.deleteUser(id)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
+
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @userServiceImpl.isCurrentUser(#id)")
+    public ResponseEntity<UserServiceDto> updateUser(@PathVariable Long id,
+                                                      @RequestBody @Valid UserUpdateDto user,
+                                                      BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+        }
+        if (this.userService.updateUser(id, user)) {
+            return ResponseEntity.ok(this.userService.findById(id));
+        }
+        return ResponseEntity.notFound().build();
+    }
+
 }
 
