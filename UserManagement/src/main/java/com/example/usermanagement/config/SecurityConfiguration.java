@@ -31,7 +31,7 @@ public class SecurityConfiguration {
         return httpSecurity.httpBasic().and().csrf().disable().authorizeHttpRequests(
                 authorizeRequests -> authorizeRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/", "/api/login", "/api/register").permitAll()
+                        .requestMatchers("/**", "/api/login", "/api/register").permitAll()
                         .requestMatchers("/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/javainuse-openapi/**",
@@ -51,9 +51,9 @@ public class SecurityConfiguration {
         ).build();
     }
 
-
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository) {
+
         return new UsersDetailsService(userRepository);
     }
 
