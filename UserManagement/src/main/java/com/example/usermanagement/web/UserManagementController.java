@@ -90,6 +90,9 @@ public class UserManagementController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<UserServiceDto> deleteUser(@PathVariable Long id) {
+        if (id == 1) {
+            return ResponseEntity.badRequest().build();
+        }
         if (this.userService.deleteUser(id)) {
             return ResponseEntity.noContent().build();
         }
