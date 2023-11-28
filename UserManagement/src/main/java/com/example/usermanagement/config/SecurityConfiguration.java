@@ -45,7 +45,8 @@ public class SecurityConfiguration {
                                 "/swagger-ui.html",
                                 "/swagger-ui/*",
                                 "/v3/**").permitAll()
-                        .requestMatchers("/api/users/delete/**").hasRole(UserRoleEnum.ADMIN.name())
+                        .requestMatchers("/api/users/delete/**",
+                                "/api/users/change-role/**").hasRole(UserRoleEnum.ADMIN.name())
                         .anyRequest().authenticated()
         ).build();
     }

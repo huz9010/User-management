@@ -37,4 +37,6 @@ public interface UserService {
     boolean isCurrentUser(Long userId);
 
     <U> boolean userExists(U user);
+
+    boolean changeUserRole(Long id, String role);
 }

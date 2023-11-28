@@ -157,4 +157,15 @@ public class UserServiceImpl implements UserService {
         return  mailCheck.isPresent() || phoneCheck.isPresent();
     }
 
+    @Override
+    public boolean changeUserRole(Long id, String role) {
+        Optional<UserEntity> user = this.userRepository.findById(id);
+        if (user.isPresent()) {
+            UserRole userRole = this.userRoleRepository.findByRole(UserRoleEnum.valueOf(role.toUpperCase()));
+            user.get().setRole(userRole);
+            this.userRepository.save(user.get());
+            return true;
+        }
+        return false;
+    }
 }

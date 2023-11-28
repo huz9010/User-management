@@ -110,5 +110,17 @@ public class UserManagementController {
         return ResponseEntity.notFound().build();
     }
 
+    @PutMapping("/change-role/{id}")
+    public ResponseEntity<HttpStatus> changeUserRole(@PathVariable Long id,
+                                            @RequestBody String role) {
+        if (!role.equalsIgnoreCase("ADMIN") && !role.equalsIgnoreCase("USER")) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+        }
+        if (!this.userService.changeUserRole(id, role)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
 
